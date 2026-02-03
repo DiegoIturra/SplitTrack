@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:split_track/screens/screens.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
 class TrackListScreen extends StatelessWidget {
@@ -33,7 +34,12 @@ class TrackListScreen extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => debugPrint('Botón presionado'),
+                onPressed: () {
+                  final route = MaterialPageRoute(
+                    builder: (context) => const NewTrackScreen(),
+                  );
+                  Navigator.push(context, route);
+                },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all(Colors.indigo),
                   foregroundColor: WidgetStateProperty.all(Colors.white),
