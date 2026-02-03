@@ -14,7 +14,10 @@ class MyApp extends StatelessWidget {
       title: "SplitTrack",
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(title: const Text("SplitTracks")),
+        appBar: AppBar(
+          title: const Text("SplitTracks"),
+          backgroundColor: Colors.indigo,
+        ),
         body: Center(child: Text("Hello world")),
       ),
     );
