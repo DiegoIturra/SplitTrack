@@ -12,36 +12,40 @@ class TrackListScreen extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("SplitTracks"),
+          title: const Text(
+            "SplitTracks",
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.indigo,
         ),
-        body: Stack(
+        body: Column(
           children: [
-            ListView.builder(
-              padding: const EdgeInsets.only(bottom: 100),
-              itemCount: 12,
-              itemBuilder: (context, index) {
-                return ImageListItem(
-                  title: "Item $index",
-                  imageUrl:
-                      "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
-                  onTap: () {
-                    debugPrint('Item $index presionado');
-                  },
-                );
-              },
+            Expanded(
+              child: ListView.builder(
+                itemCount: 20,
+                itemBuilder: (context, index) {
+                  return ImageListItem(
+                    title: "Item $index",
+                    imageUrl:
+                        "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
+                    onTap: () {
+                      debugPrint('Item $index presionado');
+                    },
+                  );
+                },
+              ),
             ),
-
-            Positioned(
-              bottom: 70,
-              left: 0,
-              right: 0,
-              child: Center(
+            Padding(
+              padding: const EdgeInsets.all(30),
+              child: SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    debugPrint('Botón presionado');
-                  },
-                  child: const Text('New Track'),
+                  onPressed: () => debugPrint('Botón presionado'),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.indigo),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                  ),
+                  child: const Text("Add New Track"),
                 ),
               ),
             ),
