@@ -4,7 +4,6 @@ import 'package:split_track/widgets/image_list_item.dart';
 class TrackListScreen extends StatelessWidget {
   const TrackListScreen({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
