@@ -53,7 +53,11 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
     final participants = [];
 
     for (int i = 0; i < _controllers.length; i++) {
-      participants.add({'name': _controllers[i].text, 'avatar': _avatars[i]});
+      final String name = _controllers[i].text.trim();
+
+      if (name.isNotEmpty) {
+        participants.add({'name': name, 'avatar': _avatars[i]});
+      }
     }
 
     debugPrint(participants.toString());
