@@ -9,6 +9,11 @@ class NewTrackScreen extends StatefulWidget {
 }
 
 class _NewTrackScreenState extends State<NewTrackScreen> {
+  final TextEditingController trackNameController = TextEditingController();
+  final String trackBackgroundUrl =
+      'https://mir-s3-cdn-cf.behance.net/project_modules/max_632/c0922f19537399.562e975f2a2f1.gif';
+  final FocusNode trackNameFocusNode = FocusNode();
+
   final List<TextEditingController> _controllers = [];
   final List<String> _avatars = [];
   final List<FocusNode> _focusNodes = [];
@@ -16,11 +21,19 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
   @override
   void initState() {
     super.initState();
-    _addParticipant();
+
+    _addParticipant(requestFocus: false);
+
+    Future.delayed(Duration.zero, () {
+      trackNameFocusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
+    trackNameController.dispose();
+    trackNameFocusNode.dispose();
+
     for (final c in _controllers) {
       c.dispose();
     }
@@ -30,7 +43,7 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
     super.dispose();
   }
 
-  void _addParticipant() {
+  void _addParticipant({bool requestFocus = false}) {
     final focusNode = FocusNode();
     final textEditingController = TextEditingController();
 
@@ -40,9 +53,11 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
       _avatars.add(_generateAvatar('user${_controllers.length}'));
     });
 
-    Future.delayed(Duration.zero, () {
-      focusNode.requestFocus();
-    });
+    if (requestFocus) {
+      Future.delayed(Duration.zero, () {
+        focusNode.requestFocus();
+      });
+    }
   }
 
   String _generateAvatar(String seed) {
@@ -50,7 +65,10 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
   }
 
   void _finish(BuildContext context) {
+    final trackName = trackNameController.text.trim();
     final participants = [];
+
+    if (trackName.isEmpty) return;
 
     for (int i = 0; i < _controllers.length; i++) {
       final String name = _controllers[i].text.trim();
@@ -74,6 +92,48 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: TextField(
+              controller: trackNameController,
+              focusNode: trackNameFocusNode,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (_) {
+                if (_focusNodes.isNotEmpty) {
+                  _focusNodes.first.requestFocus();
+                }
+              },
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(
+                labelText: 'Nombre del Track',
+                hintText: 'Ej: Vacaciones',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.network(
+                  trackBackgroundUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) {
+                    return Container(
+                      color: Colors.grey.shade300,
+                      child: const Center(
+                        child: Icon(Icons.image_not_supported),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -87,6 +147,7 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
               },
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
