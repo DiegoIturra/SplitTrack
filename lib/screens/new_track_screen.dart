@@ -1,78 +1,116 @@
 import 'package:flutter/material.dart';
-import 'package:split_track/screens/screens.dart';
+import 'package:split_track/widgets/participant_input.dart';
 
-class NewTrackScreen extends StatelessWidget {
+class NewTrackScreen extends StatefulWidget {
   const NewTrackScreen({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _NewTrackScreenState();
+}
+
+class _NewTrackScreenState extends State<NewTrackScreen> {
+  final List<TextEditingController> _controllers = [];
+  final List<String> _avatars = [];
+  final List<FocusNode> _focusNodes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _addParticipant();
+  }
+
+  @override
+  void dispose() {
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    for (final f in _focusNodes) {
+      f.dispose();
+    }
+    super.dispose();
+  }
+
+  void _addParticipant() {
+    final focusNode = FocusNode();
+    final textEditingController = TextEditingController();
+
+    setState(() {
+      _controllers.add(textEditingController);
+      _focusNodes.add(focusNode);
+      _avatars.add(_generateAvatar('user${_controllers.length}'));
+    });
+
+    Future.delayed(Duration.zero, () {
+      focusNode.requestFocus();
+    });
+  }
+
+  String _generateAvatar(String seed) {
+    return 'https://api.dicebear.com/7.x/avataaars/png?seed=$seed';
+  }
+
+  void _finish(BuildContext context) {
+    final participants = [];
+
+    for (int i = 0; i < _controllers.length; i++) {
+      participants.add({'name': _controllers[i].text, 'avatar': _avatars[i]});
+    }
+
+    debugPrint(participants.toString());
+
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("New Track", style: TextStyle(color: Colors.white)),
+        title: const Text('New Track', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: 3,
+              padding: const EdgeInsets.all(16),
+              itemCount: _controllers.length,
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsetsGeometry.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: TextFormField(
-                    textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre',
-                      hintText: 'Ingresa un nombre',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+                return ParticipantInput(
+                  controller: _controllers[index],
+                  avatarUrl: _avatars[index],
+                  focusNode: _focusNodes[index],
                 );
               },
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(30),
-            child: SizedBox(
-              width: double.infinity,
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        debugPrint('Added a new participant');
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.green),
-                        foregroundColor: WidgetStateProperty.all(Colors.white),
-                      ),
-                      child: const Text("Add New Participant"),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _addParticipant,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
                     ),
+                    child: const Text('Agregar participante'),
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        debugPrint('Finish');
-                        final route = MaterialPageRoute(
-                          builder: (context) => const TrackListScreen(),
-                        );
-                        Navigator.push(context, route);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.red),
-                        foregroundColor: WidgetStateProperty.all(Colors.white),
-                      ),
-                      child: const Text("Finish"),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => _finish(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
                     ),
+                    child: const Text('Finish'),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
