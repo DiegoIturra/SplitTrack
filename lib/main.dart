@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:split_track/providers/db_provider.dart';
 import 'package:split_track/screens/screens.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DbProvider.db.database;
   runApp(const MyApp());
 }
 
