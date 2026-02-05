@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:split_track/models/track_model.dart';
+import 'package:split_track/providers/db_provider.dart';
 import 'package:split_track/widgets/participant_input.dart';
 
 class NewTrackScreen extends StatefulWidget {
@@ -64,9 +66,9 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
     return 'https://api.dicebear.com/7.x/avataaars/png?seed=$seed';
   }
 
-  void _finish(BuildContext context) {
+  void _finish(BuildContext context) async {
     final trackName = trackNameController.text.trim();
-    final participants = [];
+    final participants = <Map<String, dynamic>>[];
 
     if (trackName.isEmpty) return;
 
@@ -78,8 +80,19 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
       }
     }
 
-    debugPrint(participants.toString());
+    final track = Track(
+      name: trackName,
+      participants: participants,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+    );
 
+    final id = await DbProvider.db.insertTrack(track);
+
+    debugPrint('Track $id has been saved');
+
+    if (!mounted) return;
+
+    // ignore: use_build_context_synchronously
     Navigator.pop(context);
   }
 

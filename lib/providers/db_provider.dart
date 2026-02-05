@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:split_track/models/track_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbProvider {
@@ -38,5 +39,30 @@ class DbProvider {
         ''');
       },
     );
+  }
+
+  Future<int> insertTrack(Track track) async {
+    final db = await database;
+    return await db.insert('tracks', track.toMap());
+  }
+
+  Future<List<Track>> getAllTracks() async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'tracks',
+      orderBy: 'created_at DESC',
+    );
+
+    return result.map((e) => Track.fromMap(e)).toList();
+  }
+
+  Future<int> deleteAllTracks() async {
+    final db = await database;
+    return await db.delete('tracks');
+  }
+
+  Future<int> deleteTrackByName(String name) async {
+    final db = await database;
+    return await db.delete('tracks', where: 'name = ?', whereArgs: [name]);
   }
 }
