@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:split_track/providers/track_list_provider.dart';
 import 'package:split_track/screens/screens.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
@@ -15,15 +17,27 @@ class TrackListScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: 20,
-              itemBuilder: (context, index) {
-                return ImageListItem(
-                  title: "Item $index",
-                  imageUrl:
-                      "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
-                  onTap: () {
-                    debugPrint('Item $index presionado');
+            child: Consumer<TrackListProvider>(
+              builder: (context, provider, _) {
+                if (provider.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (provider.tracks.isEmpty) {
+                  provider.loadTracks();
+                  return const Center(child: Text('No Tracks yet'));
+                }
+                return ListView.builder(
+                  itemCount: provider.tracks.length,
+                  itemBuilder: (context, index) {
+                    final track = provider.tracks[index];
+                    return ImageListItem(
+                      title: track.name,
+                      imageUrl:
+                          "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
+                      onTap: () {
+                        debugPrint('Track ${track.name} selected');
+                      },
+                    );
                   },
                 );
               },
@@ -34,11 +48,14 @@ class TrackListScreen extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  final route = MaterialPageRoute(
-                    builder: (context) => const NewTrackScreen(),
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NewTrackScreen()),
                   );
-                  Navigator.push(context, route);
+
+                  if (!context.mounted) return;
+                  context.read<TrackListProvider>().loadTracks();
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all(Colors.indigo),

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:split_track/providers/db_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:split_track/providers/track_list_provider.dart';
 import 'package:split_track/screens/screens.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DbProvider.db.database;
-  runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => TrackListProvider())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
