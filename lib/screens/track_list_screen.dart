@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:split_track/providers/track_list_provider.dart';
+import 'package:split_track/screens/edit_track.dart';
 import 'package:split_track/screens/screens.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
@@ -34,9 +35,15 @@ class TrackListScreen extends StatelessWidget {
                       title: track.name,
                       imageUrl:
                           "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
-                      onTap: () {
+                      onTap: () async {
                         debugPrint('Track ${track.name} selected');
+
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const EditTrackScreen()),
+                        );
                       },
+                    
                     );
                   },
                 );

@@ -125,27 +125,27 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: Image.network(
-                  trackBackgroundUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) {
-                    return Container(
-                      color: Colors.grey.shade300,
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          //   child: ClipRRect(
+          //     borderRadius: BorderRadius.circular(12),
+          //     child: AspectRatio(
+          //       aspectRatio: 16 / 9,
+          //       child: Image.network(
+          //         trackBackgroundUrl,
+          //         fit: BoxFit.cover,
+          //         errorBuilder: (_, _, _) {
+          //           return Container(
+          //             color: Colors.grey.shade300,
+          //             child: const Center(
+          //               child: Icon(Icons.image_not_supported),
+          //             ),
+          //           );
+          //         },
+          //       ),
+          //     ),
+          //   ),
+          // ),
 
           Expanded(
             child: ListView.builder(
