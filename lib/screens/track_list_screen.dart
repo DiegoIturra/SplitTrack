@@ -36,11 +36,9 @@ class TrackListScreen extends StatelessWidget {
                       imageUrl:
                           "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
                       onTap: () async {
-                        debugPrint('Track ${track.name} selected');
-
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const EditTrackScreen()),
+                          MaterialPageRoute(builder: (_) => EditTrackScreen()),
                         );
                       },
                     

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class EditTrackScreen extends StatefulWidget {
   const EditTrackScreen({super.key});
 
-
   @override
   State<StatefulWidget> createState() => _EditTrackScreenState();
   
