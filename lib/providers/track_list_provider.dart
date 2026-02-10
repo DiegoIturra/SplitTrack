@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:split_track/models/track_model.dart';
+import 'package:split_track/models/track.dart';
 import 'package:split_track/providers/db_provider.dart';
 
 class TrackListProvider extends ChangeNotifier {

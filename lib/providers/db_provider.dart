@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:split_track/models/track_model.dart';
+import 'package:split_track/models/track.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbProvider {
@@ -27,28 +27,11 @@ class DbProvider {
     return await openDatabase(
       path,
       version: 1,
-      onCreate: (Database db, int version) async {
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+      onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
-
-        await db.execute('''
-          CREATE TABLE tracks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            created_at INTEGER NOT NULL,
-            updated_at INTEGER
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE participants (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            track_id INTEGER NOT NULL,
-            name TEXT NOT NULL,
-            avatar TEXT NOT NULL,
-            FOREIGN KEY (track_id) REFERENCES tracks(id) ON DELETE CASCADE
-          )
-        ''');
-      },
+      }
     );
   }
 
@@ -105,5 +88,103 @@ class DbProvider {
   Future<int> deleteTrackByName(String name) async {
     final db = await database;
     return await db.delete('tracks', where: 'name = ?', whereArgs: [name]);
+  }
+
+  Future<void> _onCreate(Database db, int version) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+
+    await db.execute('''
+      CREATE TABLE tracks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE participants (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        track_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        FOREIGN KEY (track_id) REFERENCES tracks(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        track_id INTEGER NOT NULL,
+        description TEXT NOT NULL,
+        total_amount REAL NOT NULL,
+        created_at INTEGER NOT NULL,
+        FOREIGN KEY (track_id) REFERENCES tracks(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE expense_paid_by (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        expense_id INTEGER NOT NULL,
+        participant_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        FOREIGN KEY (expense_id) REFERENCES expenses(id) ON DELETE CASCADE,
+        FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE expense_splits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        expense_id INTEGER NOT NULL,
+        participant_id INTEGER NOT NULL,
+        percentage REAL NOT NULL,
+        FOREIGN KEY (expense_id) REFERENCES expenses(id) ON DELETE CASCADE,
+        FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
+      )
+    ''');
+  }
+
+  Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+
+    if (oldVersion < 3) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS expenses (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          track_id INTEGER NOT NULL,
+          description TEXT NOT NULL,
+          total_amount REAL NOT NULL,
+          created_at INTEGER NOT NULL,
+          FOREIGN KEY (track_id) REFERENCES tracks(id) ON DELETE CASCADE
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS expense_paid_by (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          expense_id INTEGER NOT NULL,
+          participant_id INTEGER NOT NULL,
+          amount REAL NOT NULL,
+          FOREIGN KEY (expense_id) REFERENCES expenses(id) ON DELETE CASCADE,
+          FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS expense_splits (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          expense_id INTEGER NOT NULL,
+          participant_id INTEGER NOT NULL,
+          percentage REAL NOT NULL,
+          FOREIGN KEY (expense_id) REFERENCES expenses(id) ON DELETE CASCADE,
+          FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
+        )
+      ''');
+    }
   }
 }
