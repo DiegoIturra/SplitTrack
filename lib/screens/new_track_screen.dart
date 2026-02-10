@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:split_track/models/track_model.dart';
 import 'package:split_track/providers/db_provider.dart';
 import 'package:split_track/widgets/participant_input.dart';
 
@@ -68,7 +67,7 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
 
   void _finish(BuildContext context) async {
     final trackName = trackNameController.text.trim();
-    final participants = <Map<String, dynamic>>[];
+    final participants = <Map<String, String>>[];
 
     if (trackName.isEmpty) return;
 
@@ -80,14 +79,9 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
       }
     }
 
-    final track = Track(
-      name: trackName,
-      participants: participants,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-    );
-
-    final id = await DbProvider.db.insertTrack(track);
-
+    //TODO: replace DBProvider in UI with TrackList Provider
+    final id = await DbProvider.db.insertTrackWithParticipants(trackName: trackName, participants: participants);
+  
     debugPrint('Track $id has been saved');
 
     if (!mounted) return;
@@ -124,29 +118,6 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
               ),
             ),
           ),
-
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          //   child: ClipRRect(
-          //     borderRadius: BorderRadius.circular(12),
-          //     child: AspectRatio(
-          //       aspectRatio: 16 / 9,
-          //       child: Image.network(
-          //         trackBackgroundUrl,
-          //         fit: BoxFit.cover,
-          //         errorBuilder: (_, _, _) {
-          //           return Container(
-          //             color: Colors.grey.shade300,
-          //             child: const Center(
-          //               child: Icon(Icons.image_not_supported),
-          //             ),
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -160,7 +131,6 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
               },
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
