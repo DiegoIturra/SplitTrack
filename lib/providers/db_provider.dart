@@ -134,7 +134,7 @@ class DbProvider {
     ''');
 
     await db.execute('''
-      CREATE TABLE expense_splits (
+      CREATE TABLE splits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         expense_id INTEGER NOT NULL,
         participant_id INTEGER NOT NULL,
@@ -176,7 +176,7 @@ class DbProvider {
       ''');
 
       await db.execute('''
-        CREATE TABLE IF NOT EXISTS expense_splits (
+        CREATE TABLE IF NOT EXISTS splits (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           expense_id INTEGER NOT NULL,
           participant_id INTEGER NOT NULL,
