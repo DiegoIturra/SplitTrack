@@ -2,12 +2,14 @@ class Participant {
   final int? id;
   final int trackId;
   final String name;
-    final int createdAt;
+  final String avatar;
+  final int createdAt;
 
   Participant({
     this.id, 
     required this.trackId,
     required this.name, 
+    required this.avatar,
     required this.createdAt
   });
 
@@ -15,7 +17,8 @@ class Participant {
     return {
       if(id != null) 'id': id,
       'trackId': trackId,
-      'name': name
+      'name': name,
+      'avatar': avatar
     };
   }
 
@@ -24,6 +27,7 @@ class Participant {
       id: map['id'] as int?,
       trackId: map['trackId'] as int,
       name: map['name'] as String,
+      avatar: map['avatar'] as String,
       createdAt: map['created_at'] as int,
     );
   }
