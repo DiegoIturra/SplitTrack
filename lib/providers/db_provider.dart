@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:split_track/models/expense.dart';
 import 'package:split_track/models/track.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -90,6 +91,15 @@ class DbProvider {
     return await db.delete('tracks', where: 'name = ?', whereArgs: [name]);
   }
 
+  Future<List<Expense>> getAllExpenses() async {
+    final db = await database;
+    final List<Map<String, dynamic>>result =  await db.query(
+      'expenses',
+      orderBy: 'created_at DESC'
+    );
+    return result.map((e) => Expense.fromMap(e)).toList();
+  }
+
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('PRAGMA foreign_keys = ON');
 
@@ -107,6 +117,7 @@ class DbProvider {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         track_id INTEGER NOT NULL,
         name TEXT NOT NULL,
+        avatar TEXT NOT NULL,
         FOREIGN KEY (track_id) REFERENCES tracks(id) ON DELETE CASCADE
       )
     ''');

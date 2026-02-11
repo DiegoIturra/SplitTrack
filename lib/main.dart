@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:split_track/providers/expense_provider.dart';
 import 'package:split_track/providers/track_list_provider.dart';
 import 'package:split_track/screens/edit_track.dart';
+import 'package:split_track/screens/expense_list_screen.dart';
 import 'package:split_track/screens/screens.dart';
 
 void main() async {
@@ -9,7 +11,10 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => TrackListProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => TrackListProvider()),
+        ChangeNotifierProvider(create: (_) => ExpenseProvider())
+      ],
       child: const MyApp(),
     ),
   );
@@ -27,7 +32,8 @@ class MyApp extends StatelessWidget {
       home: TrackListScreen(),
       routes: {
         "new_track": (BuildContext context) => const NewTrackScreen(),
-        "edit_track": (BuildContext context) => const EditTrackScreen()
+        "edit_track": (BuildContext context) => const EditTrackScreen(),
+        "expense_list": (BuildContext context) => const ExpenseListScreen()
       },
     );
   }
