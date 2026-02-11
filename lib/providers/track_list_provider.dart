@@ -9,7 +9,10 @@ class TrackListProvider extends ChangeNotifier {
   List<Track> get tracks => _tracks;
 
   Future<void> loadTracks() async {
+    if (isLoading) return;
+
     isLoading = true;
+    notifyListeners();
     final data = await DbProvider.db.getAllTracks();
 
     _tracks

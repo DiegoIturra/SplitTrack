@@ -10,7 +10,9 @@ class ExpenseProvider extends ChangeNotifier {
   List<Expense> get expenses => _expenses;
 
   Future<void> loadExpenses() async {
+    if(isLoading) return;
     isLoading = true;
+    notifyListeners();
     final data = await DbProvider.db.getAllExpenses();
 
     _expenses

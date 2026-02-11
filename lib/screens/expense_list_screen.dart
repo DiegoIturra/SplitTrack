@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:split_track/providers/expense_provider.dart';
+import 'package:split_track/screens/new_expense.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
-class ExpenseListScreen extends StatelessWidget {
+class ExpenseListScreen extends StatefulWidget {
   const ExpenseListScreen({super.key});
+  
+  @override
+  State<StatefulWidget> createState() => _ExpenseListScreenState();
+}
+
+class _ExpenseListScreenState extends State<ExpenseListScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      if(!mounted) return;
+      context.read<ExpenseProvider>().loadExpenses();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +39,6 @@ class ExpenseListScreen extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (provider.expenses.isEmpty) {
-                  provider.loadExpenses();
                   return const Center(child: Text('No expenses yet'));
                 }
                 return ListView.builder(
@@ -33,11 +49,8 @@ class ExpenseListScreen extends StatelessWidget {
                       title: 'Monto: ${expense.totalAmount}',
                       imageUrl:
                           "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => ExpenseListScreen()),
-                        );
+                      onTap: () {
+                        debugPrint('Total expense ${expense.totalAmount}');
                       },
                     
                     );
@@ -51,8 +64,12 @@ class ExpenseListScreen extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   debugPrint('se crea un nuevo gasto');
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NewExpenseScreen())
+                  );
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all(Colors.indigo),
@@ -66,4 +83,5 @@ class ExpenseListScreen extends StatelessWidget {
       ),
     );
   }
+
 }

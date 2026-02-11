@@ -5,8 +5,24 @@ import 'package:split_track/screens/expense_list_screen.dart';
 import 'package:split_track/screens/screens.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
-class TrackListScreen extends StatelessWidget {
+class TrackListScreen extends StatefulWidget {
   const TrackListScreen({super.key});
+  
+  @override
+  State<StatefulWidget> createState() => _TrackListScreenState();
+}
+
+class _TrackListScreenState extends State<TrackListScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      if(!mounted) return;
+      context.read<TrackListProvider>().loadTracks();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +40,6 @@ class TrackListScreen extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (provider.tracks.isEmpty) {
-                  provider.loadTracks();
                   return const Center(child: Text('No Tracks yet'));
                 }
                 return ListView.builder(
@@ -74,4 +89,5 @@ class TrackListScreen extends StatelessWidget {
       ),
     );
   }
+
 }

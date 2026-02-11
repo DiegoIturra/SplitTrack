@@ -4,6 +4,7 @@ import 'package:split_track/providers/expense_provider.dart';
 import 'package:split_track/providers/track_list_provider.dart';
 import 'package:split_track/screens/edit_track.dart';
 import 'package:split_track/screens/expense_list_screen.dart';
+import 'package:split_track/screens/new_expense.dart';
 import 'package:split_track/screens/screens.dart';
 
 void main() async {
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
       routes: {
         "new_track": (BuildContext context) => const NewTrackScreen(),
         "edit_track": (BuildContext context) => const EditTrackScreen(),
-        "expense_list": (BuildContext context) => const ExpenseListScreen()
+        "expense_list": (BuildContext context) => const ExpenseListScreen(),
+        "new_expense": (BuildContext context) => const NewExpenseScreen(),
       },
     );
   }
