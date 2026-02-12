@@ -120,6 +120,22 @@ class _NewExpenseScreenState extends State<NewExpenseScreen> {
                 onChanged: (value) {
                   setState(() => selectedPayer = value);
                 },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(30),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      debugPrint('Guardar Gasto');
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(Colors.indigo),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                    ),
+                    child: const Text('Guardar gasto'),
+                  ),
+                ),
               )
             ],
           ),
