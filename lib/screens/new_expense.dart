@@ -1,4 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:split_track/models/participant.dart';
+import 'package:split_track/screens/icon_selector_screen.dart';
+
+/*TODOS: 
+  - change onPressed in second selector in the future to select currency
+  - allow decimal inputs in amount
+  - add participants selector
+  - replace static list of participants with the real list from databaase
+*/
 
 class NewExpenseScreen extends StatefulWidget {
   const NewExpenseScreen({super.key});
@@ -8,6 +18,19 @@ class NewExpenseScreen extends StatefulWidget {
 }
 
 class _NewExpenseScreenState extends State<NewExpenseScreen> {
+
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+
+  Participant? selectedPayer;
+  IconData? selectedIcon;
+
+  final List<Participant> participants = [
+    Participant(id: 1, trackId: 2, avatar: "url", name: 'Juan', createdAt: 23),
+    Participant(id: 2, trackId: 2, avatar: "url", name: 'María', createdAt: 24),
+    Participant(id: 3, trackId: 2, avatar: "url", name: 'Pedro', createdAt: 25),
+  ];
   
   @override
   void initState() {
@@ -21,8 +44,86 @@ class _NewExpenseScreenState extends State<NewExpenseScreen> {
         title: const Text('New Expense', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
       ),
-      body: Center(
-        child: Text('New Expense Screen'),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  OutlinedButton(
+                    onPressed: () async {
+                      final icon = await Navigator.push<IconData>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const IconSelectorScreen()
+                        )
+                      );
+
+                      if(icon != null) {
+                        setState(() => selectedIcon = icon);
+                      }
+                    },
+                    child: Icon(selectedIcon ?? Icons.receipt_long),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: nameController,
+                      maxLines: 1,
+                      decoration: const InputDecoration(
+                        labelText: 'Descripción',
+                      ),
+                      textInputAction: TextInputAction.next,
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  OutlinedButton(
+                    onPressed: null,
+                    child: const Icon(Icons.percent),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: amountController,
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      decoration: const InputDecoration(
+                        labelText: 'Monto',
+                        prefixText: '\$ ',
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField(
+                initialValue: selectedPayer,
+                decoration: const InputDecoration(
+                  labelText: 'Pagado por',
+                ),
+                items: participants.map((participant) {
+                  return DropdownMenuItem(
+                    value: participant,
+                    child: Text(participant.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() => selectedPayer = value);
+                },
+              )
+            ],
+          ),
+        )
       ),
     );
   }

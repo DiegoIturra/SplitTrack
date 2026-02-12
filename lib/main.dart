@@ -4,6 +4,7 @@ import 'package:split_track/providers/expense_provider.dart';
 import 'package:split_track/providers/track_list_provider.dart';
 import 'package:split_track/screens/edit_track.dart';
 import 'package:split_track/screens/expense_list_screen.dart';
+import 'package:split_track/screens/icon_selector_screen.dart';
 import 'package:split_track/screens/new_expense.dart';
 import 'package:split_track/screens/screens.dart';
 
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         "edit_track": (BuildContext context) => const EditTrackScreen(),
         "expense_list": (BuildContext context) => const ExpenseListScreen(),
         "new_expense": (BuildContext context) => const NewExpenseScreen(),
+        "icon_selector": (BuildContext context) => const IconSelectorScreen()
       },
     );
   }
