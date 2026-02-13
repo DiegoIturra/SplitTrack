@@ -8,8 +8,6 @@ import 'package:split_track/screens/icon_selector_screen.dart';
 /*TODOS: 
   - change onPressed in second selector in the future to select currency
   - allow decimal inputs in amount
-  - add participants selector
-  - replace static list of participants with the real list from databaase
 */
 
 class NewExpenseScreen extends StatefulWidget {
