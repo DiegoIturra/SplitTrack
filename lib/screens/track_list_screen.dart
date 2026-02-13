@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:split_track/providers/track_list_provider.dart';
-import 'package:split_track/screens/expense_list_screen.dart';
+import 'package:split_track/routes/route_names.dart';
 import 'package:split_track/screens/screens.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
@@ -51,9 +51,10 @@ class _TrackListScreenState extends State<TrackListScreen> {
                       imageUrl:
                           "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
                       onTap: () async {
-                        await Navigator.push(
+                        await Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(builder: (_) => ExpenseListScreen()),
+                          RouteNames.expenseList,
+                          arguments: track.id
                         );
                       },
                     

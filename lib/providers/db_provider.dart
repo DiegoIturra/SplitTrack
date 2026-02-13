@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:split_track/models/expense.dart';
+import 'package:split_track/models/participant.dart';
 import 'package:split_track/models/track.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -98,6 +99,18 @@ class DbProvider {
       orderBy: 'created_at DESC'
     );
     return result.map((e) => Expense.fromMap(e)).toList();
+  }
+
+  Future<List<Participant>> getAllParticipants(int trackId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'participants',
+      orderBy: 'created_at DESC',
+      where: 'track_id = ?',
+      whereArgs: [trackId]
+    );
+
+    return result.map((e) => Participant.fromMap(e)).toList();
   }
 
   Future<void> _onCreate(Database db, int version) async {

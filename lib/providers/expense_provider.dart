@@ -3,11 +3,12 @@ import 'package:split_track/models/expense.dart';
 import 'package:split_track/providers/db_provider.dart';
 
 class ExpenseProvider extends ChangeNotifier {
-
   bool isLoading = false;
+  final int trackId;  
   final List<Expense> _expenses = [];
-
   List<Expense> get expenses => _expenses;
+
+  ExpenseProvider({required this.trackId});
 
   Future<void> loadExpenses() async {
     if(isLoading) return;

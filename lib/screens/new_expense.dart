@@ -11,7 +11,9 @@ import 'package:split_track/screens/icon_selector_screen.dart';
 */
 
 class NewExpenseScreen extends StatefulWidget {
-  const NewExpenseScreen({super.key});
+  final int trackId;
+
+  const NewExpenseScreen({super.key, required this.trackId});
 
   @override
   State<StatefulWidget> createState() => _NewExpenseScreenState();

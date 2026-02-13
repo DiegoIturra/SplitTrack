@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:split_track/providers/expense_provider.dart';
-import 'package:split_track/screens/new_expense.dart';
+import 'package:split_track/routes/route_names.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
 class ExpenseListScreen extends StatefulWidget {
-  const ExpenseListScreen({super.key});
+
+  final int trackId;
+
+  const ExpenseListScreen({super.key, required this.trackId});
   
   @override
   State<StatefulWidget> createState() => _ExpenseListScreenState();
@@ -66,9 +69,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               child: ElevatedButton(
                 onPressed: () async {
                   debugPrint('se crea un nuevo gasto');
-                  await Navigator.push(
+                  await Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(builder: (_) => const NewExpenseScreen())
+                    RouteNames.newExpense,
+                    arguments: widget.trackId
                   );
                 },
                 style: ButtonStyle(
