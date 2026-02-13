@@ -51,6 +51,7 @@ class _TrackListScreenState extends State<TrackListScreen> {
                       imageUrl:
                           "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
                       onTap: () async {
+                        debugPrint("se selecciona el track con trackId = ${track.id}");
                         await Navigator.pushNamed(
                           context,
                           RouteNames.expenseList,

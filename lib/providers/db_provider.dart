@@ -105,7 +105,7 @@ class DbProvider {
     final db = await database;
     final List<Map<String, dynamic>> result = await db.query(
       'participants',
-      orderBy: 'created_at DESC',
+      orderBy: 'name DESC',
       where: 'track_id = ?',
       whereArgs: [trackId]
     );

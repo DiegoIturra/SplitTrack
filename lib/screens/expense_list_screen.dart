@@ -68,7 +68,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  debugPrint('se crea un nuevo gasto');
+                  debugPrint('se crea un nuevo gasto para el track con id = ${widget.trackId}');
                   await Navigator.pushNamed(
                     context,
                     RouteNames.newExpense,

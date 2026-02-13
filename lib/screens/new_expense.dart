@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:split_track/models/participant.dart';
+import 'package:split_track/providers/participant_provider.dart';
 import 'package:split_track/screens/icon_selector_screen.dart';
 
 /*TODOS: 
@@ -28,12 +30,6 @@ class _NewExpenseScreenState extends State<NewExpenseScreen> {
   Participant? selectedPayer;
   IconData? selectedIcon;
 
-  final List<Participant> participants = [
-    Participant(id: 1, trackId: 2, avatar: "url", name: 'Juan', createdAt: 23),
-    Participant(id: 2, trackId: 2, avatar: "url", name: 'María', createdAt: 24),
-    Participant(id: 3, trackId: 2, avatar: "url", name: 'Pedro', createdAt: 25),
-  ];
-  
   @override
   void initState() {
     super.initState();
@@ -108,21 +104,39 @@ class _NewExpenseScreenState extends State<NewExpenseScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              DropdownButtonFormField(
-                initialValue: selectedPayer,
-                decoration: const InputDecoration(
-                  labelText: 'Pagado por',
-                ),
-                items: participants.map((participant) {
-                  return DropdownMenuItem(
-                    value: participant,
-                    child: Text(participant.name),
+              Consumer<ParticipantProvider>(
+                builder: (context, provider, _) {
+                  if (provider.isLoading) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  if (provider.participants.isEmpty) {
+                    return const Text(
+                      'No hay participantes disponibles',
+                    );
+                  }
+
+                  return DropdownButtonFormField<Participant>(
+                    initialValue: selectedPayer,
+                    decoration: const InputDecoration(
+                      labelText: 'Pagado por',
+                    ),
+                    items: provider.participants.map((participant) {
+                      return DropdownMenuItem(
+                        value: participant,
+                        child: Text(participant.name),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      debugPrint("Se ha seleccionado el pagador ${value?.name}");
+                      setState(() => selectedPayer = value);
+                    },
+                    validator: (value) => value == null ? 'Seleccione un pagador' : null,
                   );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() => selectedPayer = value);
                 },
               ),
+
+
               Padding(
                 padding: const EdgeInsets.all(30),
                 child: SizedBox(
