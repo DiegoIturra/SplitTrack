@@ -135,8 +135,6 @@ class _NewExpenseScreenState extends State<NewExpenseScreen> {
                   );
                 },
               ),
-
-
               Padding(
                 padding: const EdgeInsets.all(30),
                 child: SizedBox(
