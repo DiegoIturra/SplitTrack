@@ -28,4 +28,18 @@ class ExpensePaidBy {
       amount: (map['amount'] as num).toDouble(),
     );
   }
+
+  ExpensePaidBy copyWith({
+    int? id,
+    int? expenseId,
+    int? participantId,
+    double? amount,
+  }) {
+    return ExpensePaidBy(
+      id: id ?? this.id,
+      expenseId: expenseId ?? this.expenseId,
+      participantId: participantId ?? this.participantId,
+      amount: amount ?? this.amount,
+    );
+  }
 }

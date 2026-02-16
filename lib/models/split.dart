@@ -32,4 +32,20 @@ class Split {
       amount: (map['amount'] as num).toDouble()
     );
   }
+
+  Split copyWith({
+    int? id,
+    int? expenseId,
+    int? participantId,
+    double? percentage,
+    double? amount
+  }) {
+    return Split(
+      id: id ?? this.id,
+      expenseId: expenseId ?? this.expenseId,
+      participantId: participantId ?? this.participantId,
+      percentage: percentage ?? this.percentage,
+      amount: amount ?? this.amount
+    );
+  }
 }
