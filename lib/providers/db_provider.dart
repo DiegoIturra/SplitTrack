@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:split_track/models/expense.dart';
+import 'package:split_track/models/expense_paid_by.dart';
 import 'package:split_track/models/participant.dart';
+import 'package:split_track/models/split.dart' as split_model;
 import 'package:split_track/models/track.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -40,6 +42,49 @@ class DbProvider {
   Future<int> insertTrack(Track track) async {
     final db = await database;
     return await db.insert('tracks', track.toMap());
+  }
+
+  Future<int> insertExpense(Expense expense) async {
+    final db = await database;
+    return await db.insert('expenses', expense.toMap());
+  }
+
+  Future<int> insertExpensePaidBy(ExpensePaidBy expensePaidBy) async {
+    final db = await database;
+    return await db.insert('expense_paid_by', expensePaidBy.toMap());
+  }
+
+  Future<int> insertSplit(split_model.Split split) async {
+    final db = await database;
+    return await db.insert('splits', split.toMap());
+  }
+
+  Future<void> insertFullExpense({
+    required Expense expense,
+    required ExpensePaidBy paidBy,
+    required List<split_model.Split> splits,
+  }) async {
+    final db = await database;
+
+    await db.transaction((txn) async {
+      final expenseId = await txn.insert(
+        'expenses',
+        expense.toMap(),
+      );
+
+      await txn.insert(
+        'expense_paid_by',
+        paidBy.copyWith(expenseId: expenseId).toMap(),
+      );
+
+      for (final split in splits) {
+        await txn.insert(
+          'splits',
+          split.copyWith(expenseId: expenseId).toMap(),
+        );
+      }
+
+    });
   }
 
   Future<int> insertTrackWithParticipants({
@@ -92,10 +137,12 @@ class DbProvider {
     return await db.delete('tracks', where: 'name = ?', whereArgs: [name]);
   }
 
-  Future<List<Expense>> getAllExpenses() async {
+  Future<List<Expense>> getAllExpenses(int trackId) async {
     final db = await database;
     final List<Map<String, dynamic>>result =  await db.query(
       'expenses',
+      where: 'track_id = ?',
+      whereArgs: [trackId],
       orderBy: 'created_at DESC'
     );
     return result.map((e) => Expense.fromMap(e)).toList();
@@ -163,6 +210,7 @@ class DbProvider {
         expense_id INTEGER NOT NULL,
         participant_id INTEGER NOT NULL,
         percentage REAL NOT NULL,
+        amount REAL NOT NULL,
         FOREIGN KEY (expense_id) REFERENCES expenses(id) ON DELETE CASCADE,
         FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
       )
@@ -205,6 +253,7 @@ class DbProvider {
           expense_id INTEGER NOT NULL,
           participant_id INTEGER NOT NULL,
           percentage REAL NOT NULL,
+          amount REAL NOT NULL,
           FOREIGN KEY (expense_id) REFERENCES expenses(id) ON DELETE CASCADE,
           FOREIGN KEY (participant_id) REFERENCES participants(id) ON DELETE CASCADE
         )
