@@ -59,7 +59,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       imageUrl:
                           "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
                       onTap: () {
-                        debugPrint('Total expense ${expense.totalAmount}');
+                        debugPrint('Expense ${expense.description}, Total expense ${expense.totalAmount}');
                       },
                     
                     );
