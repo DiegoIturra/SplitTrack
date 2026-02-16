@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:split_track/providers/expense_provider.dart';
 import 'package:split_track/routes/route_names.dart';
+import 'package:split_track/widgets/expense_expansion_tile.dart';
 import 'package:split_track/widgets/image_list_item.dart';
 
 class ExpenseListScreen extends StatefulWidget {
@@ -54,15 +55,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   itemCount: provider.expenses.length,
                   itemBuilder: (context, index) {
                     final expense = provider.expenses[index];
-                    return ImageListItem(
-                      title: 'Monto: ${expense.totalAmount}',
-                      imageUrl:
-                          "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
-                      onTap: () {
-                        debugPrint('Expense ${expense.description}, Total expense ${expense.totalAmount}');
-                      },
-                    
-                    );
+                    return ExpenseExpansionTile(expense: expense);
                   },
                 );
               },
