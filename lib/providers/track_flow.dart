@@ -26,6 +26,8 @@ class TrackFlow extends StatelessWidget {
               return MaterialPageRoute(
                 builder: (_) => const ExpenseListScreen(),
               );
+            default:
+              return null;
           }
         },
       ),
