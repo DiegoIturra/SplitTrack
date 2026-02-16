@@ -6,9 +6,7 @@ import 'package:split_track/widgets/image_list_item.dart';
 
 class ExpenseListScreen extends StatefulWidget {
 
-  final int trackId;
-
-  const ExpenseListScreen({super.key, required this.trackId});
+  const ExpenseListScreen({super.key});
   
   @override
   State<StatefulWidget> createState() => _ExpenseListScreenState();
@@ -28,8 +26,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final expenseProvider = context.read<ExpenseProvider>();
+
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+        ),
         title: const Text("Expenses", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
       ),
@@ -68,12 +74,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  debugPrint('se crea un nuevo gasto para el track con id = ${widget.trackId}');
-                  await Navigator.pushNamed(
-                    context,
-                    RouteNames.newExpense,
-                    arguments: widget.trackId
-                  );
+                  debugPrint('se crea un nuevo gasto para el track con id = ${expenseProvider.trackId}');
+                  Navigator.of(context).pushNamed(RouteNames.newExpense);
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all(Colors.indigo),
