@@ -7,8 +7,7 @@ class PayerRow extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Use ExpensePaidBy instead Expense
-    final payer = "pagador prueba";
+    final payer = "pagador ${expense.paidBy?.participantName}";
     return Row(
       children: [
         const Icon(Icons.payment, size: 16),

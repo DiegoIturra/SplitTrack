@@ -3,12 +3,14 @@ class ExpensePaidBy {
   final int expenseId;
   final int participantId;
   final double amount;
+  final String? participantName;
 
   ExpensePaidBy({
     this.id,
     required this.expenseId,
     required this.participantId,
     required this.amount,
+    this.participantName
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class ExpensePaidBy {
       expenseId: map['expense_id'] as int,
       participantId: map['participant_id'] as int,
       amount: (map['amount'] as num).toDouble(),
+      participantName: map['participant_name'] as String?,
     );
   }
 
@@ -40,6 +43,7 @@ class ExpensePaidBy {
       expenseId: expenseId ?? this.expenseId,
       participantId: participantId ?? this.participantId,
       amount: amount ?? this.amount,
+      participantName: participantName
     );
   }
 }

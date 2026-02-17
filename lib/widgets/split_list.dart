@@ -4,25 +4,24 @@ import 'package:split_track/models/expense.dart';
 class SplitList extends StatelessWidget {
   final Expense expense;
 
-  final splits = [
-    {'paid_by': 'Diego', 'amount': 30},
-    {'paid_by': 'Juan', 'amount': 23},
-    {'paid_by': 'Anibal', 'amount': 1000}
-  ];
-
-
-  SplitList({super.key, required this.expense});
+  const SplitList({super.key, required this.expense});
 
 
   @override
   Widget build(BuildContext context) {
+    final splits = expense.splits;
+
+    for(var s in splits){
+      debugPrint('name: ${s.participantName}, amount: ${s.amount}, percentage: ${s.percentage}');
+    }
+
     return Column(
       children: splits.map((split) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("${split['paid_by']}"),
-            Text('- \$${split['amount']}'),
+            Text("${split.participantName}"),
+            Text('- \$${split.amount * (split.percentage / 100)}'),
           ],
         );
       }).toList(),

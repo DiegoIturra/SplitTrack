@@ -4,13 +4,15 @@ class Split {
   final int participantId;
   final double percentage;
   final double amount;
+  final String? participantName;
 
   Split({
     this.id,
     required this.expenseId,
     required this.participantId,
     required this.percentage,
-    required this.amount
+    required this.amount,
+    this.participantName
   });
 
   Map<String, dynamic> toMap() {
@@ -29,7 +31,8 @@ class Split {
       expenseId: map['expense_id'] as int,
       participantId: map['participant_id'] as int,
       percentage: (map['percentage'] as num).toDouble(),
-      amount: (map['amount'] as num).toDouble()
+      amount: (map['amount'] as num).toDouble(),
+      participantName: map['participant_name'] as String?,
     );
   }
 
@@ -45,7 +48,8 @@ class Split {
       expenseId: expenseId ?? this.expenseId,
       participantId: participantId ?? this.participantId,
       percentage: percentage ?? this.percentage,
-      amount: amount ?? this.amount
+      amount: amount ?? this.amount,
+      participantName: participantName
     );
   }
 }
