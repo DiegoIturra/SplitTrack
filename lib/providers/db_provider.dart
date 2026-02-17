@@ -139,13 +139,47 @@ class DbProvider {
 
   Future<List<Expense>> getAllExpenses(int trackId) async {
     final db = await database;
-    final List<Map<String, dynamic>>result =  await db.query(
+    final List<Map<String, dynamic>> result =  await db.query(
       'expenses',
       where: 'track_id = ?',
       whereArgs: [trackId],
       orderBy: 'created_at DESC'
     );
-    return result.map((e) => Expense.fromMap(e)).toList();
+
+    List<Expense> expenses = [];
+
+    for(var map in result) {
+      final int expenseId = map['id'];
+
+      final List<Map<String, dynamic>> resSplits = await db.rawQuery('''
+        SELECT s.*, p.name as participant_name
+        FROM splits s
+        JOIN participants p ON s.participant_id = p.id
+        WHERE s.expense_id = ?
+        ''', 
+        [expenseId]
+      );
+
+      final List<Map<String, dynamic>> resPaidBy = await db.rawQuery('''
+        SELECT epb.*, p.name as participant_name
+        FROM expense_paid_by epb
+        JOIN participants p ON epb.participant_id = p.id
+        WHERE epb.expense_id = ?
+        ''', 
+        [expenseId]
+      );
+
+      final splits = resSplits.map((s) => split_model.Split.fromMap(s)).toList();
+
+      ExpensePaidBy? paidBy;
+      if(resPaidBy.isNotEmpty) {
+        paidBy = ExpensePaidBy.fromMap(resPaidBy.first);
+      }
+
+      expenses.add(Expense.fromMap(map, splits: splits, paidBy: paidBy));
+    }
+
+    return expenses;
   }
 
   Future<List<Participant>> getAllParticipants(int trackId) async {
