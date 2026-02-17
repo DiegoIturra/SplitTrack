@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:split_track/providers/expense_provider.dart';
+import 'package:split_track/providers/participant_provider.dart';
 import 'package:split_track/routes/route_names.dart';
 import 'package:split_track/widgets/expense_expansion_tile.dart';
 
