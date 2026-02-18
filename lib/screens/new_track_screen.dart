@@ -69,7 +69,7 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
     final trackName = trackNameController.text.trim();
     final participants = <Map<String, String>>[];
 
-    if (trackName.isEmpty) return;
+    if (trackName.isEmpty || participants.isEmpty) return;
 
     for (int i = 0; i < _controllers.length; i++) {
       final String name = _controllers[i].text.trim();
