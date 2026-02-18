@@ -67,7 +67,47 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   itemCount: provider.expenses.length,
                   itemBuilder: (context, index) {
                     final expense = provider.expenses[index];
-                    return ExpenseExpansionTile(expense: expense);
+                    return Dismissible(
+                      key: Key(expense.id.toString()),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        color: Colors.red,
+                        child: const Icon(Icons.delete, color: Colors.white,),
+                      ),
+                      confirmDismiss: (direction) async {
+                        return await showDialog<bool>(
+                          context: context,
+                          builder: (dialogContext) => AlertDialog(
+                            title: const Text("Confirmar"),
+                            content: const Text("¿Estás seguro de que quieres borrar este Expense?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(dialogContext, false), 
+                                child: const Text("CANCELAR")
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(dialogContext, true), 
+                                child: const Text("BORRAR")
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      onDismissed: (direction) {
+                        final String deletedName = expense.description;
+                        context.read<ExpenseProvider>().deleteExpenseById(expense.id!);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("$deletedName eliminado"),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      },
+                      child: ExpenseExpansionTile(expense: expense),
+                    );
                   },
                 );
               },

@@ -59,24 +59,32 @@ class _TrackListScreenState extends State<TrackListScreen> {
                       ),
                       
                       confirmDismiss: (direction) async {
-                        return await showDialog(
+                        return await showDialog<bool>(
                           context: context,
-                          builder: (context) => AlertDialog(
+                          builder: (dialogContext) => AlertDialog(
                             title: const Text("Confirmar"),
-                            content: const Text("¿Estás seguro de que quieres borrar este Track?"),
+                            content: Text("¿Estás seguro de que quieres borrar el track '${track.name}'? Se borrarán todos sus gastos."),
                             actions: [
-                              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text("CANCELAR")),
                               TextButton(
-                                onPressed: () {
-                                  context.read<TrackListProvider>().deleteTrack(track.id!);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("${track.name} eliminado")),
-                                  );
-                                  Navigator.of(context).pop(true);
-                                }, 
-                                child: const Text("BORRAR")
+                                onPressed: () => Navigator.of(dialogContext).pop(false), 
+                                child: const Text("CANCELAR")
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(dialogContext).pop(true), 
+                                child: const Text("BORRAR", style: TextStyle(color: Colors.red))
                               ),
                             ],
+                          ),
+                        );
+                      },
+                      onDismissed: (direction) {
+                        final String trackName = track.name;
+                        context.read<TrackListProvider>().deleteTrack(track.id!);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("$trackName eliminado"),
+                            backgroundColor: Colors.red,
                           ),
                         );
                       },

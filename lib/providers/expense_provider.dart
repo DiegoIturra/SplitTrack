@@ -71,6 +71,11 @@ class ExpenseProvider extends ChangeNotifier {
     await loadExpenses();
   }
 
+  Future<void> deleteExpenseById(int id) async {
+    await DbProvider.db.deleteExpenseById(id);
+    debugPrint('Expense $id deleted from DB');
+    await loadExpenses();
+  }
 
   List<Transaction> calculateSettlements(List<Expense> expenses) {
     Map<int, double> balances = {};
