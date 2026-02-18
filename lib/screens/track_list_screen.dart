@@ -42,23 +42,61 @@ class _TrackListScreenState extends State<TrackListScreen> {
                 if (provider.tracks.isEmpty) {
                   return const Center(child: Text('No Tracks yet'));
                 }
+
                 return ListView.builder(
                   itemCount: provider.tracks.length,
                   itemBuilder: (context, index) {
                     final track = provider.tracks[index];
-                    return ImageListItem(
-                      title: track.name,
-                      imageUrl:
-                          "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
-                      onTap: () async {
-                        debugPrint("se selecciona el track con trackId = ${track.id}");
-                        await Navigator.pushNamed(
-                          context,
-                          RouteNames.expenseList,
-                          arguments: track.id
+
+                    return Dismissible(
+                      key: Key(track.id.toString()),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        color: Colors.red,
+                        child: const Icon(Icons.delete, color: Colors.white),
+                      ),
+
+                      onDismissed: (direction) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("${track.name} eliminado")),
                         );
                       },
-                    
+
+                      confirmDismiss: (direction) async {
+                        return await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("Confirmar"),
+                            content: const Text("¿Estás seguro de que quieres borrar este Track?"),
+                            actions: [
+                              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text("CANCELAR")),
+                              TextButton(
+                                onPressed: () {
+                                  context.read<TrackListProvider>().deleteTrack(track.id!);
+                                  Navigator.of(context).pop(true);
+                                }, 
+                                child: const Text("BORRAR")
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: ImageListItem(
+                        title: track.name,
+                        imageUrl:
+                            "https://media.craiyon.com/2025-06-10/yfNVNakqS5urgb1GRB11ww.webp",
+                        onTap: () async {
+                          debugPrint("se selecciona el track con trackId = ${track.id}");
+                          await Navigator.pushNamed(
+                            context,
+                            RouteNames.expenseList,
+                            arguments: track.id
+                          );
+                        },
+                      
+                      )
                     );
                   },
                 );
