@@ -69,7 +69,7 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
     final trackName = trackNameController.text.trim();
     final participants = <Map<String, String>>[];
 
-    if (trackName.isEmpty || participants.isEmpty) return;
+    if (trackName.isEmpty) return;
 
     for (int i = 0; i < _controllers.length; i++) {
       final String name = _controllers[i].text.trim();
@@ -78,6 +78,8 @@ class _NewTrackScreenState extends State<NewTrackScreen> {
         participants.add({'name': name, 'avatar': _avatars[i]});
       }
     }
+
+    if(participants.isEmpty) return;
 
     //TODO: replace DBProvider in UI with TrackList Provider
     final id = await DbProvider.db.insertTrackWithParticipants(trackName: trackName, participants: participants);
