@@ -45,4 +45,19 @@ class Expense {
       paidBy: paidBy
     );
   }
+
+  @override
+  String toString() {
+    return '''
+      Expense {
+        id: $id,
+        trackId: $trackId,
+        description: "$description",
+        totalAmount: $totalAmount,
+        createdAt: $createdAt,
+        paidBy: ${paidBy?.participantName ?? 'ID: ${paidBy?.participantId}'},
+        splitsCount: ${splits.length},
+        splits: ${splits.map((s) => '${s.participantName}: ${s.amount}').toList()}
+      }''';
+  }
 }

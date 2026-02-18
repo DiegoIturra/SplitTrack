@@ -50,6 +50,7 @@ class ExpenseProvider extends ChangeNotifier {
       amount: amount,
     );
 
+    final splitAmount = double.parse((amount / participants.length).toStringAsFixed(2));
     final percentage = 100 / participants.length;
 
     final splits = participants.map((p) {
@@ -57,7 +58,7 @@ class ExpenseProvider extends ChangeNotifier {
         expenseId: 0,
         participantId: p.id!,
         percentage: percentage,
-        amount: amount
+        amount: splitAmount
       );
     }).toList();
 
@@ -70,57 +71,60 @@ class ExpenseProvider extends ChangeNotifier {
     await loadExpenses();
   }
 
-  List<Transaction> calculateSettlements(List<Expense> expenses, List<Participant> participants) {
-    Map<int, double> balances = {
-      for(var participant in participants) participant.id!: 0.0
-    };
 
-    for(var expense in expenses) {
-      if(expense.paidBy != null) {
-        balances[expense.paidBy!.participantId] = (balances[expense.paidBy!.participantId] ?? 0) + expense.totalAmount;
+  List<Transaction> calculateSettlements(List<Expense> expenses) {
+    Map<int, double> balances = {};
+
+    for (var expense in expenses) {
+      if (expense.paidBy != null) {
+        int payerId = expense.paidBy!.participantId;
+        balances[payerId] = (balances[payerId] ?? 0) + expense.totalAmount;
       }
 
       for (var split in expense.splits) {
-        balances[split.participantId] = (balances[split.participantId] ?? 0) - split.amount;
+        int debtorId = split.participantId;
+        balances[debtorId] = (balances[debtorId] ?? 0) - split.amount;
       }
     }
 
+    debugPrint("Mapa de balances final: $balances");
+
+    List<Map<String, dynamic>> debtors = [];
+    List<Map<String, dynamic>> creditors = [];
+
+    balances.forEach((id, amount) {
+      double roundedAmount = double.parse(amount.toStringAsFixed(2));
+      
+      if (roundedAmount < 0) {
+        debtors.add({'id': id, 'amount': roundedAmount.abs()});
+      } else if (roundedAmount > 0) {
+        creditors.add({'id': id, 'amount': roundedAmount});
+      }
+    });
+
     List<Transaction> settlements = [];
-
-    var debtors = balances.entries
-      .where((e) => e.value < -0.01)
-      .map((e) => {'id': e.key, 'amount': e.value.abs()})
-      .toList();
-    
-    var creditors = balances.entries
-      .where((e) => e.value > 0.01)
-      .map((e) => {'id': e.key, 'amount': e.value})
-      .toList();
-
-    int d = 0; // puntero deudores
-    int c = 0; // puntero acreedores
+    int d = 0; int c = 0;
 
     while (d < debtors.length && c < creditors.length) {
-      double dAmount = debtors[d]['amount'] as double;
-      double cAmount = creditors[c]['amount'] as double;
-      
+      double dAmount = debtors[d]['amount'];
+      double cAmount = creditors[c]['amount'];
       double settledAmount = (dAmount < cAmount) ? dAmount : cAmount;
 
       settlements.add(Transaction(
-        fromId: debtors[d]['id'] as int,
-        toId: creditors[c]['id'] as int,
+        fromId: debtors[d]['id'],
+        toId: creditors[c]['id'],
         amount: settledAmount,
       ));
 
-      // Actualizar saldos restantes
-      debtors[d]['amount'] = (debtors[d]['amount'] as double) - settledAmount;
-      creditors[c]['amount'] = (creditors[c]['amount'] as double) - settledAmount;
+      debtors[d]['amount'] -= settledAmount;
+      creditors[c]['amount'] -= settledAmount;
 
-      if (debtors[d]['amount']! < 0.01) d++;
-      if (creditors[c]['amount']! < 0.01) c++;
+      if (debtors[d]['amount'] < 0.01) d++;
+      if (creditors[c]['amount'] < 0.01) c++;
     }
 
     return settlements;
-    
   }
+
+
 }

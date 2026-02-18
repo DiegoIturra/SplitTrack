@@ -4,6 +4,7 @@ import 'package:split_track/providers/expense_provider.dart';
 import 'package:split_track/providers/participant_provider.dart';
 import 'package:split_track/routes/route_names.dart';
 import 'package:split_track/widgets/expense_expansion_tile.dart';
+import 'package:split_track/widgets/settlement_modal.dart';
 
 class ExpenseListScreen extends StatefulWidget {
 
@@ -22,12 +23,23 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     Future.microtask(() {
       if(!mounted) return;
       context.read<ExpenseProvider>().loadExpenses();
+      context.read<ParticipantProvider>().loadParticipants();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final expenseProvider = context.read<ExpenseProvider>();
+    final expenseProvider = context.watch<ExpenseProvider>();
+    final participantProvider = context.watch<ParticipantProvider>();
+
+    final expenses = expenseProvider.expenses;
+    final participants = participantProvider.participants;
+
+    final settlements = expenseProvider.calculateSettlements(expenses);
+
+    for(var s in settlements) {
+      debugPrint('settlement: ${s.toString()}');
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -65,16 +77,42 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             padding: const EdgeInsets.all(30),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  debugPrint('se crea un nuevo gasto para el track con id = ${expenseProvider.trackId}');
-                  Navigator.of(context).pushNamed(RouteNames.newExpense);
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(Colors.indigo),
-                  foregroundColor: WidgetStateProperty.all(Colors.white),
-                ),
-                child: const Text("Add New expense"),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      debugPrint('Show total transactions');
+
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => SettlementModal(settlements: settlements, participants: participants),
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 120, 181, 63),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: Text('Show Total'),
+                  ),
+                  const SizedBox(height: 5),
+                  ElevatedButton(
+                    onPressed: () {
+                      debugPrint('Add new expense');
+                      Navigator.of(context).pushNamed(RouteNames.newExpense);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: Text('Add new expense'),
+                  )
+                ],
               ),
             ),
           ),

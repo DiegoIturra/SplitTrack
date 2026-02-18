@@ -29,4 +29,9 @@ class Participant {
     );
   }
 
+  @override
+  String toString() {
+    return 'Participant(id: $id, trackId: $trackId, name: $name)';
+  }
+
 }

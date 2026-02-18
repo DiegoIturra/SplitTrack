@@ -21,7 +21,7 @@ class SplitList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("${split.participantName}"),
-            Text('- \$${split.amount * (split.percentage / 100)}'),
+            Text('\$${split.amount}'),
           ],
         );
       }).toList(),
