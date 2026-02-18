@@ -57,13 +57,7 @@ class _TrackListScreenState extends State<TrackListScreen> {
                         color: Colors.red,
                         child: const Icon(Icons.delete, color: Colors.white),
                       ),
-
-                      onDismissed: (direction) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("${track.name} eliminado")),
-                        );
-                      },
-
+                      
                       confirmDismiss: (direction) async {
                         return await showDialog(
                           context: context,
@@ -75,6 +69,9 @@ class _TrackListScreenState extends State<TrackListScreen> {
                               TextButton(
                                 onPressed: () {
                                   context.read<TrackListProvider>().deleteTrack(track.id!);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("${track.name} eliminado")),
+                                  );
                                   Navigator.of(context).pop(true);
                                 }, 
                                 child: const Text("BORRAR")
