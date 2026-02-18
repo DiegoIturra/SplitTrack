@@ -137,6 +137,11 @@ class DbProvider {
     return await db.delete('tracks', where: 'name = ?', whereArgs: [name]);
   }
 
+  Future<int> deleteTrackById(int id) async {
+    final db = await database;
+    return await db.delete('tracks', where: 'id = ?', whereArgs: [id]);
+  }
+
   Future<List<Expense>> getAllExpenses(int trackId) async {
     final db = await database;
     final List<Map<String, dynamic>> result =  await db.query(

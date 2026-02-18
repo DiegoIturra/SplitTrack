@@ -27,4 +27,11 @@ class TrackListProvider extends ChangeNotifier {
     await DbProvider.db.insertTrack(track);
     await loadTracks();
   }
+
+  Future<void> deleteTrack(int id) async {
+    await DbProvider.db.deleteTrackById(id);
+    debugPrint('track $id eliminado de la BD');
+    await loadTracks();
+  }
+
 }
